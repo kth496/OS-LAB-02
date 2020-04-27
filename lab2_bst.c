@@ -103,7 +103,65 @@ int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
  *  @return                 : status (success or fail)
  */
 int lab2_node_remove(lab2_tree *tree, int key) {
-        // You need to implement lab2_node_remove function.
+        struct lab2_node *curNode = tree->root;
+        struct lab2_node *parNode = NULL;
+
+        /* Find the Node which contains given key*/
+        while (curNode) {
+                if (curNode->key == key)
+                        break;
+                else if (curNode->key > key) {
+                        parNode = curNode;
+                        curNode = curNode->left;
+                } else {
+                        parNode = curNode;
+                        curNode = curNode->right;
+                }
+        }
+
+        /* If there is no key return -1 */
+        if (!curNode)
+                return -1;
+
+        /*
+         * BST Node Remove Rules
+         * 1. Node that has no child node.
+         * 2. Node that has only one child node.
+         * 3. Node that has two child nodes.
+         */
+
+        /* CASE 1 */
+        if (!curNode->left && !curNode->right) {
+                if (parNode->right->key == curNode->key)
+                        parNode->right = NULL;
+                else
+                        parNode->left = NULL;
+                lab2_node_delete(curNode);
+        }
+
+        /* CASE 2 */
+        if (!curNode->left != !curNode->right) {
+                if (parNode->right->key == curNode->key) {
+                        if (!curNode->right)
+                                parNode->right = curNode->right;
+                        else
+                                parNode->right = curNode->left;
+                } else {
+                        if (!curNode->right)
+                                parNode->left = curNode->right;
+                        else
+                                parNode->left = curNode->left;
+                }
+                lab2_node_delete(curNode);
+        }
+
+        /* CASE 3 */
+        if (curNode->left && curNode->right) {
+                curNode->key = curNode->right->key;
+                lab2_tree *tmpTree;
+                tmpTree->root = curNode->right;
+                lab2_node_remove(tmpTree, curNode->key);
+        }
 }
 
 /*

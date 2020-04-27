@@ -27,12 +27,10 @@
  *  int key                 : node key value
  */
 typedef struct lab2_node {
-
         pthread_mutex_t mutex;
         struct lab2_node *left;
         struct lab2_node *right;
         int key;
-
 } lab2_node;
 
 /*

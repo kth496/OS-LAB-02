@@ -1,5 +1,8 @@
 {
   "C_Cpp.clang_format_fallbackStyle": "{ IndentWidth: 8 }",
   "editor.tabSize": 8,
-  "editor.insertSpaces": true
+  "editor.insertSpaces": true,
+  "files.associations": {
+    "types.h": "c"
+  }
 }
