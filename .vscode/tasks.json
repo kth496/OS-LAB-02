@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    {
+      "label": "build Object file ",
+      "command": "g++",
+      "args": ["-c", "-g", "-o", "${fileBasenameNoExtension}.o", "${file}"]
+    },
+    {
+      "label": "build Final Executable",
+      "command": "g++",
+      "args": ["-g", "-o", "lab1_sched.exe", "lab1_sched.o", "lab1_sched_test.o"]
+      // "group": {
+      //   "kind": "build",
+      //   "isDefault": true
+      // }
+    }
+  ],
+  "version": "2.0.0"
+}
