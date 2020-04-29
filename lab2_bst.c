@@ -151,7 +151,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         }
 
         /* CASE 2 */
-        if (!curNode->left != !curNode->right) {
+        else if (!curNode->left != !curNode->right) {
                 if (parNode->right->key == curNode->key) {
                         if (!curNode->right)
                                 parNode->right = curNode->right;
@@ -167,7 +167,8 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         }
 
         /* CASE 3 */
-        if (curNode->left && curNode->right) {
+        // if (curNode->left && curNode->right) {
+        else {
                 lab2_tree *tmpTree;
                 curNode->key = curNode->right->key;
                 /* Find least key node */
@@ -313,7 +314,7 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
         }
 
         /* CASE 2 */
-        if (!curNode->left != !curNode->right) {
+        else if (!curNode->left != !curNode->right) {
                 if (parNode->right->key == curNode->key) {
                         if (!curNode->right)
                                 parNode->right = curNode->right;
@@ -329,7 +330,8 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
         }
 
         /* CASE 3 */
-        if (curNode->left && curNode->right) {
+        // if (curNode->left && curNode->right) {
+        else {
                 lab2_tree *tmpTree;
                 curNode->key = curNode->right->key;
                 /* Find least key node */
