@@ -30,10 +30,16 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
  *  @return                 : status (success or fail)
  */
 int lab2_node_print_inorder(lab2_tree *tree) {
-        // You need to implement lab2_node_print_inorder function.
-        // 	if (root->left) inorder(root->left); //left child
-        // printf("%c ", root->alphabet); //print node
-        // if (root->right) inorder(root->right); //right child
+        lab2_tree *goLeft, *goRight;
+        if (tree->root->left) {
+                goLeft->root = tree->root->left;
+                lab2_node_print_inorder(goLeft);
+        }
+        printf("%d ", tree->root->key);
+        if (tree->root->right) {
+                goRight->root = tree->root->right;
+                lab2_node_print_inorder(goRight);
+        }
 }
 
 /*
