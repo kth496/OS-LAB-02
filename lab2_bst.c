@@ -29,6 +29,9 @@
  */
 int lab2_node_print_inorder(lab2_tree *tree) {
         // You need to implement lab2_node_print_inorder function.
+        // 	if (root->left) inorder(root->left); //left child
+        // printf("%c ", root->alphabet); //print node
+        // if (root->right) inorder(root->right); //right child
 }
 
 /*
@@ -157,10 +160,17 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 
         /* CASE 3 */
         if (curNode->left && curNode->right) {
-                curNode->key = curNode->right->key;
                 lab2_tree *tmpTree;
-                tmpTree->root = curNode->right;
-                lab2_node_remove(tmpTree, curNode->key);
+                curNode->key = curNode->right->key;
+                /* Find least key node */
+                lab2_node *leastFromRight = curNode->right;
+                while (leastFromRight->left)
+                        leastFromRight = leastFromRight->left;
+
+                /* Swap the key and delete node */
+                curNode->key = leastFromRight->key;
+                tmpTree->root = leastFromRight;
+                lab2_node_remove(tmpTree, leastFromRight->key);
         }
 }
 
