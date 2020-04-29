@@ -280,6 +280,7 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
  */
 void lab2_tree_delete(lab2_tree *tree) {
         // You need to implement lab2_tree_delete function.
+        free(tree);
 }
 
 /*
@@ -292,4 +293,5 @@ void lab2_tree_delete(lab2_tree *tree) {
  */
 void lab2_node_delete(lab2_node *node) {
         // You need to implement lab2_node_delete function.
+        free(node);
 }
