@@ -40,6 +40,7 @@ int lab2_node_print_inorder(lab2_tree *tree) {
                 goRight->root = tree->root->right;
                 lab2_node_print_inorder(goRight);
         }
+        return 1;
 }
 
 /*
@@ -181,6 +182,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                 tmpTree->root = leastFromRight;
                 lab2_node_remove(tmpTree, leastFromRight->key);
         }
+        return 1;
 }
 
 /*
@@ -263,6 +265,7 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
                 lab2_node_remove(tmpTree, leastFromRight->key);
         }
         pthread_mutex_lock(&node_mutex);
+        return 1;
 }
 
 /*
@@ -345,6 +348,7 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
                 lab2_node_remove(tmpTree, leastFromRight->key);
         }
         pthread_mutex_unlock(&mutex);
+        return 1;
 }
 
 /*
