@@ -53,6 +53,8 @@ int lab2_node_print_inorder(lab2_tree *tree) {
 lab2_tree *lab2_tree_create() {
         // You need to implement lab2_tree_create function.
         lab2_tree *tree = (lab2_tree *)malloc(sizeof(lab2_tree));
+        tree->root = NULL;
+        
         return tree;
 }
 
