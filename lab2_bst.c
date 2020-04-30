@@ -70,7 +70,7 @@ lab2_node *lab2_node_create(int key) {
         // You need to implement lab2_node_create function.
         struct lab2_node *node = (lab2_node *)malloc(sizeof(lab2_node));
 
-        pthread_mutex_init(&node->mutex, NULL);
+        // pthread_mutex_init(&node->mutex, NULL);
         node->key = key;
         node->left = node->right = NULL;
 
@@ -122,6 +122,32 @@ int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
  */
 int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
         // You need to implement lab2_node_insert_fg function.
+
+        struct lab2_node *curNode = tree->root;
+        struct lab2_node *parNode = NULL;
+
+        pthread_mutex_lock(&mutex);
+
+        while (curNode) {
+                parNode = curNode;
+                if (new_node->key == curNode->key)
+                        return 1;
+                if (new_node->key < curNode->key)
+                        curNode = curNode->left;
+                else
+                        curNode = curNode->right;
+        }
+
+        if (!curNode)
+                tree->root = new_node;
+        else if (new_node->key < parNode->key)
+                parNode->left = new_node;
+        else
+                parNode->right = new_node;
+
+        pthread_mutex_unlock(&mutex);
+
+        return 0;
 }
 
 /*
@@ -136,6 +162,32 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
  */
 int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
         // You need to implement lab2_node_insert_cg function.
+
+        pthread_mutex_lock(&mutex);
+
+        struct lab2_node *curNode = tree->root;
+        struct lab2_node *parNode = NULL;
+
+        while (curNode) {
+                parNode = curNode;
+                if (new_node->key == curNode->key)
+                        return 1;
+                if (new_node->key < curNode->key)
+                        curNode = curNode->left;
+                else
+                        curNode = curNode->right;
+        }
+
+        if (!curNode)
+                tree->root = new_node;
+        else if (new_node->key < parNode->key)
+                parNode->left = new_node;
+        else
+                parNode->right = new_node;
+
+        pthread_mutex_unlock(&mutex);
+
+        return 0;
 }
 
 /*
