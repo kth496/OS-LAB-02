@@ -54,7 +54,7 @@ lab2_tree *lab2_tree_create() {
         // You need to implement lab2_tree_create function.
         lab2_tree *tree = (lab2_tree *)malloc(sizeof(lab2_tree));
         tree->root = NULL;
-        
+
         return tree;
 }
 
@@ -87,7 +87,7 @@ lab2_node *lab2_node_create(int key) {
  */
 int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
         // You need to implement lab2_node_insert function.
-        
+
         lab2_node *p = tree->root;
         lab2_node *q = NULL;
 
