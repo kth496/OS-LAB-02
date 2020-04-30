@@ -52,7 +52,7 @@ int lab2_node_print_inorder(lab2_tree *tree) {
  */
 lab2_tree *lab2_tree_create() {
         // You need to implement lab2_tree_create function.
-        lab2_tree *tree = (lab2_tree *)malloc(sizeof(lab2_tree));
+        struct lab2_tree *tree = (lab2_tree *)malloc(sizeof(lab2_tree));
         tree->root = NULL;
         
         return tree;
@@ -68,7 +68,7 @@ lab2_tree *lab2_tree_create() {
  */
 lab2_node *lab2_node_create(int key) {
         // You need to implement lab2_node_create function.
-        lab2_node *node = (lab2_node *)malloc(sizeof(lab2_node));
+        struct lab2_node *node = (lab2_node *)malloc(sizeof(lab2_node));
 
         pthread_mutex_init(&node->mutex, NULL);
         node->key = key;
@@ -88,25 +88,25 @@ lab2_node *lab2_node_create(int key) {
 int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
         // You need to implement lab2_node_insert function.
         
-        lab2_node *p = tree->root;
-        lab2_node *q = NULL;
+        struct lab2_node *curNode = tree->root;
+        struct lab2_node *parNode = NULL;
 
-        while (p) {
-                q = p;
-                if (new_node->key == p->key)
+        while (curNode) {
+                parNode = curNode;
+                if (new_node->key == curNode->key)
                         return 1;
-                if (new_node->key < p->key)
-                        p = p->left;
+                if (new_node->key < curNode->key)
+                        curNode = curNode->left;
                 else
-                        p = p->right;
+                        curNode = curNode->right;
         }
 
-        if (!p)
+        if (!curNode)
                 tree->root = new_node;
-        else if (new_node->key < q->key)
-                q->left = new_node;
+        else if (new_node->key < parNode->key)
+                parNode->left = new_node;
         else
-                q->right = new_node;
+                parNode->right = new_node;
 
         return 0;
 }
