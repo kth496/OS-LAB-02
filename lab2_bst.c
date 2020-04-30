@@ -20,6 +20,7 @@
 
 #include "include/lab2_sync_types.h"
 
+/* This is Global mutex variable*/
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /*
