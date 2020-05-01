@@ -108,9 +108,12 @@ void bst_test(int num_threads, int node_count) {
         int *data = (int *)malloc(sizeof(int) * node_count);
 
         srand(time(NULL));
+        printf("random Node keys\n");
         for (i = 0; i < node_count; i++) {
-                data[i] = rand();
+                data[i] = rand() % 100;
+                printf("%d ", data[i]);
         }
+        printf("\n");
 
         if (!(threads = (thread_arg *)malloc(sizeof(thread_arg) * num_threads)))
                 abort();
@@ -291,7 +294,6 @@ int main(int argc, char *argv[]) {
         char op;
         int num_threads = 0, node_count = 0;
         int fd;
-
         optind = 0;
 
         while ((op = getopt(argc, argv, "t:c:")) != -1) {

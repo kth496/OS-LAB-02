@@ -31,6 +31,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
  *  @return                 : status (success or fail)
  */
 int lab2_node_print_inorder(lab2_tree *tree) {
+        printf("## ");
         lab2_tree *goLeft, *goRight;
         if (tree->root->left) {
                 goLeft->root = tree->root->left;
@@ -102,7 +103,7 @@ int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
                         curNode = curNode->right;
         }
 
-        if (!curNode)
+        if (!parNode)
                 tree->root = new_node;
         else if (new_node->key < parNode->key)
                 parNode->left = new_node;
@@ -139,7 +140,7 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
                         curNode = curNode->right;
         }
 
-        if (!curNode)
+        if (!parNode)
                 tree->root = new_node;
         else if (new_node->key < parNode->key)
                 parNode->left = new_node;
@@ -179,7 +180,7 @@ int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
                         curNode = curNode->right;
         }
 
-        if (!curNode)
+        if (!parNode)
                 tree->root = new_node;
         else if (new_node->key < parNode->key)
                 parNode->left = new_node;
@@ -217,6 +218,36 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                 }
         }
 
+        /* remove root node*/
+        if (!parNode) {
+                if (!curNode->left && !curNode->right) {
+                        tree->root = NULL;
+                        lab2_node_delete(curNode);
+                        return 0;
+                }
+
+                else if (!curNode->left != !curNode->right) {
+                        if (!curNode->right)
+                                tree->root = curNode->right;
+                        else
+                                tree->root = curNode->left;
+                        lab2_node_delete(curNode);
+                }
+
+                else {
+                        lab2_tree *tmpTree;
+                        /* Find least key node */
+                        lab2_node *leastFromRight = curNode->right;
+                        while (leastFromRight->left)
+                                leastFromRight = leastFromRight->left;
+
+                        /* Swap the key and delete node */
+                        curNode->key = leastFromRight->key;
+                        tmpTree->root = leastFromRight;
+                        lab2_node_remove(tmpTree, leastFromRight->key);
+                }
+        }
+
         /* If there is no key return -1 */
         if (!curNode)
                 return -1;
@@ -227,6 +258,9 @@ int lab2_node_remove(lab2_tree *tree, int key) {
          * 2. Node that has only one child node.
          * 3. Node that has two child nodes.
          */
+        printf("3333\n");
+        printf("%d \n", tree->root == curNode);
+        printf("%d %d\n", key, curNode->key);
 
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
@@ -234,11 +268,14 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                         parNode->right = NULL;
                 else
                         parNode->left = NULL;
+                printf("%d %d %d %d\n", parNode->key, parNode->right->key,
+                       parNode->left->key, curNode->key);
                 lab2_node_delete(curNode);
         }
 
         /* CASE 2 */
         else if (!curNode->left != !curNode->right) {
+                printf("5555\n");
                 if (parNode->right->key == curNode->key) {
                         if (!curNode->right)
                                 parNode->right = curNode->right;
@@ -256,6 +293,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         /* CASE 3 */
         // if (curNode->left && curNode->right) {
         else {
+                printf("6666\n");
                 lab2_tree *tmpTree;
                 curNode->key = curNode->right->key;
                 /* Find least key node */
@@ -268,6 +306,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                 tmpTree->root = leastFromRight;
                 lab2_node_remove(tmpTree, leastFromRight->key);
         }
+        printf("7777\n");
         return 1;
 }
 
