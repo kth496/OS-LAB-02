@@ -9,15 +9,13 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/lab2_bst.exe",
-      "args": ["-t", "4", "-c", "1000000"],
-      "program": "${workspaceFolder}/lab2_bst",
-      "args": ["-t", "4", "-c", "10000000"],
+      "args": ["-t", "1", "-c", "10"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": true,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerPath": "C:\\mingw64\\bin\\gdb.exe",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",

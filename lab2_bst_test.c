@@ -55,9 +55,9 @@ static void print_result(lab2_tree *tree, int num_threads, int node_count,
         printf("    test threads        : %d \n", num_threads);
         printf("    execution time      : %lf seconds \n\n", time);
 
-        // printf("\n BST inorder iteration result : \n");
-        // result_count = lab2_node_print_inorder(tree);
-        // printf("    total node count    : %d \n\n", node_count);
+        printf("\n BST inorder iteration result : \n");
+        result_count = lab2_node_print_inorder(tree->root);
+        printf("\n total node count    : %d \n\n", node_count);
 }
 
 void *thread_job_delete(void *arg) {
@@ -107,7 +107,8 @@ void bst_test(int num_threads, int node_count) {
         thread_arg *threads;
         int *data = (int *)malloc(sizeof(int) * node_count);
 
-        srand(time(NULL));
+        // srand(time(NULL));
+        srand(1);
         printf("random Node keys\n");
         for (i = 0; i < node_count; i++) {
                 data[i] = rand() % 100;
