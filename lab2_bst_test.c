@@ -55,9 +55,9 @@ static void print_result(lab2_tree *tree, int num_threads, int node_count,
         printf("    test threads        : %d \n", num_threads);
         printf("    execution time      : %lf seconds \n\n", time);
 
-        printf("\n BST inorder iteration result : \n");
-        result_count = lab2_node_print_inorder(tree->root);
-        printf("\n total node count    : %d \n\n", node_count);
+        // printf("\n BST inorder iteration result : \n");
+        // result_count = lab2_node_print_inorder(tree->root);
+        // printf("\n total node count    : %d \n\n", node_count);
 }
 
 void *thread_job_delete(void *arg) {
@@ -109,10 +109,10 @@ void bst_test(int num_threads, int node_count) {
 
         // srand(time(NULL));
         srand(1);
-        printf("random Node keys\n");
+        // printf("random Node keys\n");
         for (i = 0; i < node_count; i++) {
                 data[i] = rand() % 100;
-                printf("%d ", data[i]);
+                // printf("%d ", data[i]);
         }
         printf("\n");
 
@@ -129,7 +129,8 @@ void bst_test(int num_threads, int node_count) {
                 lab2_node *node = lab2_node_create(data[i]);
                 lab2_node_insert(tree, node);
         }
-
+        lab2_node_print_inorder(tree->root);
+        printf("\n");
         gettimeofday(&tv_end, NULL);
         exe_time = get_timeval(&tv_start, &tv_end);
         print_result(tree, num_threads, node_count, LAB2_TYPE_SINGLE,
@@ -190,21 +191,28 @@ void bst_test(int num_threads, int node_count) {
         exe_time = get_timeval(&tv_insert_start, &tv_insert_end);
         print_result(tree, num_threads, node_count, is_sync, LAB2_OPTYPE_INSERT,
                      exe_time);
+        lab2_node_print_inorder(tree->root);
+        printf("\n");
         lab2_tree_delete(tree);
 
         /*
          * single thread delete test
          */
+        printf("Delete Test start\n");
 
         tree = lab2_tree_create();
         for (i = 0; i < node_count; i++) {
                 lab2_node *node = lab2_node_create(data[i]);
+                // printf("%d ", data[i]);
                 lab2_node_insert(tree, node);
         }
-
+        // printf("\n root  %d\n", tree->root->key);
+        lab2_node_print_inorder(tree->root);
+        printf("\nwtf\n");
         gettimeofday(&tv_start, NULL);
         for (i = 0; i < node_count; i++) {
                 lab2_node_remove(tree, data[i]);
+                lab2_node_print_inorder(tree->root);
         }
 
         gettimeofday(&tv_end, NULL);
