@@ -203,16 +203,15 @@ void bst_test(int num_threads, int node_count) {
         tree = lab2_tree_create();
         for (i = 0; i < node_count; i++) {
                 lab2_node *node = lab2_node_create(data[i]);
-                // printf("%d ", data[i]);
                 lab2_node_insert(tree, node);
         }
-        // printf("\n root  %d\n", tree->root->key);
-        lab2_node_print_inorder(tree->root);
-        printf("\nwtf\n");
+
         gettimeofday(&tv_start, NULL);
         for (i = 0; i < node_count; i++) {
                 lab2_node_remove(tree, data[i]);
-                lab2_node_print_inorder(tree->root);
+                // printf("remove %d -> ", data[i]);
+                // lab2_node_print_inorder(tree->root);
+                // printf("\n");
         }
 
         gettimeofday(&tv_end, NULL);
