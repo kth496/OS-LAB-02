@@ -236,8 +236,10 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 
         /* If there is no key return -1 */
         if (!curNode) {
+#ifdef DEBUG
                 printf("There is no such key : %d\n", key);
                 return -1;
+#endif
         }
 
         /* remove root node*/

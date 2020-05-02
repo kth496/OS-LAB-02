@@ -19,6 +19,7 @@
 #define LAB2_SUCCESS 0
 #define LAB2_ERROR -1
 
+#define DEBUG
 /*
  * lab2_node
  *

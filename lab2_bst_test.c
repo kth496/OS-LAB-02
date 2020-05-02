@@ -28,8 +28,6 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
-#define DEBUG
-
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);
         printf("    -t: num thread, must be bigger than 0 ( e.g. 4 )\n");
