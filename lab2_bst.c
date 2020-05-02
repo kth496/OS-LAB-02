@@ -370,60 +370,116 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
         }
 
         /* If there is no key return -1 */
-        if (!curNode)
+        if (!curNode) {
+#ifdef DEBUG
+                printf("There is no such key : %d\n", key);
+#endif
                 return -1;
+        }
 
-        /*
-         * BST Node Remove Rules
-         * 1. Node that has no child node.
-         * 2. Node that has only one child node.
-         * 3. Node that has two child nodes.
-         */
+        /* remove root node*/
+        if (!parNode) {
+                /* Since root nodes has no parent node, use global mutex lock*/
+                pthread_mutex_lock(&mutex);
+                if (!curNode->left && !curNode->right) {
+                        tree->root = NULL;
+                }
 
-        pthread_mutex_t node_mutex = curNode->mutex;
+                else if (!curNode->left != !curNode->right) {
+                        if (curNode->right) {
+                                lab2_node *tmp = curNode->right;
+                                curNode->key = curNode->right->key;
+                                curNode->right = curNode->right->right;
+                                lab2_node_delete(tmp);
+                        } else {
+                                lab2_node *tmp = curNode->left;
+                                curNode->key = curNode->left->key;
+                                curNode->left = curNode->left->left;
+                                lab2_node_delete(tmp);
+                        }
+                }
+
+                else {
+                        /* Find least key node */
+                        lab2_node *leastFromRight = curNode->right;
+                        lab2_node *parLFR = curNode;
+                        while (leastFromRight->left) {
+                                parLFR = leastFromRight;
+                                leastFromRight = leastFromRight->left;
+                        }
+
+                        /* Swap the value and adjust pointer*/
+                        curNode->key = leastFromRight->key;
+                        if (parLFR->right == leastFromRight) {
+                                parLFR->right = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        } else {
+                                parLFR->left = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        }
+                }
+                pthread_mutex_unlock(&mutex);
+                return 0;
+        }
+
+        pthread_mutex_t node_mutex = parNode->mutex;
         pthread_mutex_lock(&node_mutex);
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
-                if (parNode->right->key == curNode->key)
-                        parNode->right = NULL;
-                else
-                        parNode->left = NULL;
+                if (parNode->right)
+                        if (parNode->right->key == curNode->key)
+                                parNode->right = NULL;
+
+                if (parNode->left)
+                        if (parNode->left->key == curNode->key)
+                                parNode->left = NULL;
                 lab2_node_delete(curNode);
         }
 
         /* CASE 2 */
         else if (!curNode->left != !curNode->right) {
-                if (parNode->right->key == curNode->key) {
-                        if (!curNode->right)
-                                parNode->right = curNode->right;
-                        else
-                                parNode->right = curNode->left;
-                } else {
-                        if (!curNode->right)
-                                parNode->left = curNode->right;
-                        else
-                                parNode->left = curNode->left;
+                if (parNode->right) {
+                        if (parNode->right->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->right = curNode->right;
+                                else
+                                        parNode->right = curNode->left;
+                        }
+                }
+
+                if (parNode->left) {
+                        if (parNode->left->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->left = curNode->right;
+                                else
+                                        parNode->left = curNode->left;
+                        }
                 }
                 lab2_node_delete(curNode);
         }
 
         /* CASE 3 */
-        // if (curNode->left && curNode->right) {
         else {
-                lab2_tree *tmpTree;
-                curNode->key = curNode->right->key;
                 /* Find least key node */
                 lab2_node *leastFromRight = curNode->right;
-                while (leastFromRight->left)
+                lab2_node *parLFR = curNode;
+                while (leastFromRight->left) {
+                        parLFR = leastFromRight;
                         leastFromRight = leastFromRight->left;
+                }
 
-                /* Swap the key and delete node */
+                /* Swap the value and adjust pointer*/
                 curNode->key = leastFromRight->key;
-                tmpTree->root = leastFromRight;
-                lab2_node_remove(tmpTree, leastFromRight->key);
+                if (parLFR->right == leastFromRight) {
+                        parLFR->right = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                } else {
+                        parLFR->left = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                }
         }
-        pthread_mutex_lock(&node_mutex);
-        return 1;
+        pthread_mutex_unlock(&node_mutex);
+        return 0;
 }
 
 /*
@@ -454,6 +510,15 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
                 }
         }
 
+        /* If there is no key return -1 */
+        if (!curNode) {
+#ifdef DEBUG
+                printf("There is no such key : %d\n", key);
+#endif
+                pthread_mutex_unlock(&mutex);
+                return -1;
+        }
+
         /* remove root node*/
         if (!parNode) {
                 if (!curNode->left && !curNode->right) {
@@ -475,74 +540,81 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
                 }
 
                 else {
-                        lab2_tree *tmpTree = lab2_tree_create();
                         /* Find least key node */
                         lab2_node *leastFromRight = curNode->right;
-                        while (leastFromRight->left)
+                        lab2_node *parLFR = curNode;
+                        while (leastFromRight->left) {
+                                parLFR = leastFromRight;
                                 leastFromRight = leastFromRight->left;
+                        }
 
-                        /* Swap the key and delete node */
+                        /* Swap the value and adjust pointer*/
                         curNode->key = leastFromRight->key;
-                        tmpTree->root = leastFromRight;
-                        lab2_node_remove(tmpTree, leastFromRight->key);
+                        if (parLFR->right == leastFromRight) {
+                                parLFR->right = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        } else {
+                                parLFR->left = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        }
                 }
                 pthread_mutex_unlock(&mutex);
                 return 0;
         }
 
-        /*
-         * BST Node Remove Rules
-         * 1. Node that has no child node.
-         * 2. Node that has only one child node.
-         * 3. Node that has two child nodes.
-         */
-        // printf("%d \n", tree->root == curNode);
-        // printf("%d %d\n", key, curNode->key);
-
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
-                if (parNode->right->key == curNode->key)
-                        parNode->right = NULL;
-                else
-                        parNode->left = NULL;
-                // printf("%d %d %d %d\n", parNode->key, parNode->right->key,
-                //        parNode->left->key, curNode->key);
+                if (parNode->right)
+                        if (parNode->right->key == curNode->key)
+                                parNode->right = NULL;
+
+                if (parNode->left)
+                        if (parNode->left->key == curNode->key)
+                                parNode->left = NULL;
                 lab2_node_delete(curNode);
         }
 
         /* CASE 2 */
         else if (!curNode->left != !curNode->right) {
-                if (parNode->right->key == curNode->key) {
-                        if (curNode->right)
-                                parNode->right = curNode->right;
-                        else
-                                parNode->right = curNode->left;
-                } else {
-                        if (curNode->right)
-                                parNode->left = curNode->right;
-                        else
-                                parNode->left = curNode->left;
+                if (parNode->right) {
+                        if (parNode->right->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->right = curNode->right;
+                                else
+                                        parNode->right = curNode->left;
+                        }
+                }
+
+                if (parNode->left) {
+                        if (parNode->left->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->left = curNode->right;
+                                else
+                                        parNode->left = curNode->left;
+                        }
                 }
                 lab2_node_delete(curNode);
         }
 
         /* CASE 3 */
-        // if (curNode->left && curNode->right) {
         else {
-                lab2_tree *tmpTree = lab2_tree_create();
-                curNode->key = curNode->right->key;
                 /* Find least key node */
                 lab2_node *leastFromRight = curNode->right;
-                while (leastFromRight->left)
+                lab2_node *parLFR = curNode;
+                while (leastFromRight->left) {
+                        parLFR = leastFromRight;
                         leastFromRight = leastFromRight->left;
+                }
 
-                /* Swap the key and delete node */
+                /* Swap the value and adjust pointer*/
                 curNode->key = leastFromRight->key;
-                tmpTree->root = leastFromRight;
-                if (!leastFromRight->left && !leastFromRight->right)
-                        curNode->right = NULL;
-                else
-                        lab2_node_remove(tmpTree, leastFromRight->key);
+                if (parLFR->right == leastFromRight) {
+                        parLFR->right = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                } else {
+                        parLFR->left = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                }
         }
         pthread_mutex_unlock(&mutex);
         return 0;
