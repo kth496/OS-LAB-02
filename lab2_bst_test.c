@@ -28,6 +28,8 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
+#define DEBUG
+
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);
         printf("    -t: num thread, must be bigger than 0 ( e.g. 4 )\n");
@@ -107,14 +109,25 @@ void bst_test(int num_threads, int node_count) {
         thread_arg *threads;
         int *data = (int *)malloc(sizeof(int) * node_count);
 
-        // srand(time(NULL));
+#ifndef DEBUG
+        srand(time(NULL));
+        for (i = 0; i < node_count; i++) {
+                data[i] = rand();
+        }
+#endif
+
+#ifdef DEBUG
         srand(1);
-        // printf("random Node keys\n");
         for (i = 0; i < node_count; i++) {
                 data[i] = rand() % 100;
-                // printf("%d ", data[i]);
+                printf("%d ", data[i]);
+        }
+        int testCase2[20] = {83, 86, 77, 15, 93, 35, 86, 92, 49, 21};
+        for (i = 0; i < node_count; i++) {
+                data[i] = testCase2[i];
         }
         printf("\n");
+#endif
 
         if (!(threads = (thread_arg *)malloc(sizeof(thread_arg) * num_threads)))
                 abort();
@@ -137,6 +150,7 @@ void bst_test(int num_threads, int node_count) {
                      LAB2_OPTYPE_INSERT, exe_time);
         lab2_tree_delete(tree);
 
+#ifndef DEBUG
         /*
          * multi therad insert test coarse-grained
          */
@@ -194,24 +208,28 @@ void bst_test(int num_threads, int node_count) {
         lab2_node_print_inorder(tree->root);
         printf("\n");
         lab2_tree_delete(tree);
-
+#endif
         /*
          * single thread delete test
          */
-        printf("Delete Test start\n");
-
         tree = lab2_tree_create();
         for (i = 0; i < node_count; i++) {
                 lab2_node *node = lab2_node_create(data[i]);
                 lab2_node_insert(tree, node);
         }
 
+#ifdef DEBUG
+        lab2_node_print_inorder(tree->root);
+        printf("\n");
+#endif
         gettimeofday(&tv_start, NULL);
         for (i = 0; i < node_count; i++) {
                 lab2_node_remove(tree, data[i]);
-                // printf("remove %d -> ", data[i]);
-                // lab2_node_print_inorder(tree->root);
-                // printf("\n");
+#ifdef DEBUG
+                printf("remove %d -> ", data[i]);
+                lab2_node_print_inorder(tree->root);
+                printf("\n");
+#endif
         }
 
         gettimeofday(&tv_end, NULL);
