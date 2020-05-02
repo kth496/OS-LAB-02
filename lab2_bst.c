@@ -234,6 +234,12 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                 }
         }
 
+        /* If there is no key return -1 */
+        if (!curNode) {
+                printf("There is no such key : %d\n", key);
+                return -1;
+        }
+
         /* remove root node*/
         if (!parNode) {
                 if (!curNode->left && !curNode->right) {
@@ -255,28 +261,26 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                 }
 
                 else {
-                        lab2_tree *tmpTree = lab2_tree_create();
                         /* Find least key node */
                         lab2_node *leastFromRight = curNode->right;
-                        while (leastFromRight->left)
+                        lab2_node *parLFR = curNode;
+                        while (leastFromRight->left) {
+                                parLFR = leastFromRight;
                                 leastFromRight = leastFromRight->left;
+                        }
 
-                        /* Swap the key and delete node */
+                        /* Swap the value and adjust pointer*/
                         curNode->key = leastFromRight->key;
-                        tmpTree->root = leastFromRight;
-                        lab2_node_remove(tmpTree, leastFromRight->key);
+                        if (parLFR->right == leastFromRight) {
+                                parLFR->right = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        } else {
+                                parLFR->left = leastFromRight->right;
+                                lab2_node_delete(leastFromRight);
+                        }
                 }
                 return 0;
         }
-
-        /*
-         * BST Node Remove Rules
-         * 1. Node that has no child node.
-         * 2. Node that has only one child node.
-         * 3. Node that has two child nodes.
-         */
-        // printf("%d \n", tree->root == curNode);
-        // printf("%d %d\n", key, curNode->key);
 
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
@@ -284,8 +288,6 @@ int lab2_node_remove(lab2_tree *tree, int key) {
                         parNode->right = NULL;
                 else
                         parNode->left = NULL;
-                // printf("%d %d %d %d\n", parNode->key, parNode->right->key,
-                //        parNode->left->key, curNode->key);
                 lab2_node_delete(curNode);
         }
 
@@ -306,22 +308,24 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         }
 
         /* CASE 3 */
-        // if (curNode->left && curNode->right) {
         else {
-                lab2_tree *tmpTree = lab2_tree_create();
-                curNode->key = curNode->right->key;
                 /* Find least key node */
                 lab2_node *leastFromRight = curNode->right;
-                while (leastFromRight->left)
+                lab2_node *parLFR = curNode;
+                while (leastFromRight->left) {
+                        parLFR = leastFromRight;
                         leastFromRight = leastFromRight->left;
+                }
 
-                /* Swap the key and delete node */
+                /* Swap the value and adjust pointer*/
                 curNode->key = leastFromRight->key;
-                tmpTree->root = leastFromRight;
-                if (!leastFromRight->left && !leastFromRight->right)
-                        curNode->right = NULL;
-                else
-                        lab2_node_remove(tmpTree, leastFromRight->key);
+                if (parLFR->right == leastFromRight) {
+                        parLFR->right = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                } else {
+                        parLFR->left = leastFromRight->right;
+                        lab2_node_delete(leastFromRight);
+                }
         }
         return 0;
 }
