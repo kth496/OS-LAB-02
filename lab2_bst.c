@@ -20,6 +20,8 @@
 
 #include "include/lab2_sync_types.h"
 
+// #define DEBUG
+
 /* This is Global mutex variable*/
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -238,8 +240,8 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         if (!curNode) {
 #ifdef DEBUG
                 printf("There is no such key : %d\n", key);
-                return -1;
 #endif
+                return -1;
         }
 
         /* remove root node*/
@@ -286,25 +288,34 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
-                if (parNode->right->key == curNode->key)
-                        parNode->right = NULL;
-                else
-                        parNode->left = NULL;
+                if (parNode->right)
+                        if (parNode->right->key == curNode->key)
+                                parNode->right = NULL;
+
+                if (parNode->left)
+                        if (parNode->left->key == curNode->key)
+                                parNode->left = NULL;
                 lab2_node_delete(curNode);
         }
 
         /* CASE 2 */
         else if (!curNode->left != !curNode->right) {
-                if (parNode->right->key == curNode->key) {
-                        if (curNode->right)
-                                parNode->right = curNode->right;
-                        else
-                                parNode->right = curNode->left;
-                } else {
-                        if (curNode->right)
-                                parNode->left = curNode->right;
-                        else
-                                parNode->left = curNode->left;
+                if (parNode->right) {
+                        if (parNode->right->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->right = curNode->right;
+                                else
+                                        parNode->right = curNode->left;
+                        }
+                }
+
+                if (parNode->left) {
+                        if (parNode->left->key == curNode->key) {
+                                if (curNode->right)
+                                        parNode->left = curNode->right;
+                                else
+                                        parNode->left = curNode->left;
+                        }
                 }
                 lab2_node_delete(curNode);
         }

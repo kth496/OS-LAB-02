@@ -28,6 +28,8 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
+// #define DEBUG
+
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);
         printf("    -t: num thread, must be bigger than 0 ( e.g. 4 )\n");
@@ -120,11 +122,11 @@ void bst_test(int num_threads, int node_count) {
                 data[i] = rand() % 100;
                 printf("%d ", data[i]);
         }
-        int testCase2[20] = {83, 86, 77, 15, 93, 35, 86, 92, 49, 21};
-        for (i = 0; i < node_count; i++) {
-                data[i] = testCase2[i];
-        }
-        printf("\n");
+        // int testCase2[20] = {83, 86, 77, 15, 93, 35, 86, 92, 49, 21};
+        // for (i = 0; i < node_count; i++) {
+        //         data[i] = testCase2[i];
+        // }
+        // printf("\n");
 #endif
 
         if (!(threads = (thread_arg *)malloc(sizeof(thread_arg) * num_threads)))
@@ -140,7 +142,7 @@ void bst_test(int num_threads, int node_count) {
                 lab2_node *node = lab2_node_create(data[i]);
                 lab2_node_insert(tree, node);
         }
-        lab2_node_print_inorder(tree->root);
+
         printf("\n");
         gettimeofday(&tv_end, NULL);
         exe_time = get_timeval(&tv_start, &tv_end);
@@ -203,7 +205,7 @@ void bst_test(int num_threads, int node_count) {
         exe_time = get_timeval(&tv_insert_start, &tv_insert_end);
         print_result(tree, num_threads, node_count, is_sync, LAB2_OPTYPE_INSERT,
                      exe_time);
-        lab2_node_print_inorder(tree->root);
+
         printf("\n");
         lab2_tree_delete(tree);
 #endif
@@ -218,7 +220,7 @@ void bst_test(int num_threads, int node_count) {
 
 #ifdef DEBUG
         lab2_node_print_inorder(tree->root);
-        printf("\n");
+        printf("\n-------------\n");
 #endif
         gettimeofday(&tv_start, NULL);
         for (i = 0; i < node_count; i++) {
@@ -229,7 +231,7 @@ void bst_test(int num_threads, int node_count) {
                 printf("\n");
 #endif
         }
-
+        printf("is end?????\n");
         gettimeofday(&tv_end, NULL);
         exe_time = get_timeval(&tv_start, &tv_end);
         print_result(tree, num_threads, node_count, LAB2_TYPE_SINGLE,
