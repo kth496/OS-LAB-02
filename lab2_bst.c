@@ -573,3 +573,5 @@ void lab2_node_delete(lab2_node *node) {
         // You need to implement lab2_node_delete function.
         free(node);
 }
+
+int isTreeEmpty(lab2_tree *tree) { return tree->root == NULL; }

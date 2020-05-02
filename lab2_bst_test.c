@@ -231,7 +231,9 @@ void bst_test(int num_threads, int node_count) {
                 printf("\n");
 #endif
         }
-        printf("is end?????\n");
+#ifdef DEBUG
+        printf("is tree empty? %d\n", isTreeEmpty(tree));
+#endif
         gettimeofday(&tv_end, NULL);
         exe_time = get_timeval(&tv_start, &tv_end);
         print_result(tree, num_threads, node_count, LAB2_TYPE_SINGLE,
