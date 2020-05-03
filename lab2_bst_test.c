@@ -28,7 +28,7 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
-// #define DEBUG
+#define DEBUG
 
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);

@@ -20,8 +20,8 @@
 
 #include "include/lab2_sync_types.h"
 
-// #define DEBUG
-// #define fg_remove
+#define DEBUG
+#define fg_remove
 
 /* This is Global mutex variable*/
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
