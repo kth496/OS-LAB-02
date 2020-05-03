@@ -21,6 +21,7 @@
 #include "include/lab2_sync_types.h"
 
 // #define DEBUG
+// #define fg_remove
 
 /* This is Global mutex variable*/
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -78,6 +79,7 @@ lab2_node *lab2_node_create(int key) {
         node->key = key;
         node->left = node->right = NULL;
         pthread_mutex_init(&(node->mutex), NULL);
+        pthread_rwlock_init(&(node->rwlock), NULL);
 
         return node;
 }
@@ -356,12 +358,19 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
         lab2_node *curNode = tree->root;
         lab2_node *parNode = NULL;
 
-        pthread_mutex_t node_mutex;
+        pthread_rwlock_t rwlock;
         /* Find the Node which contains given key*/
         while (curNode) {
+                rwlock = curNode->rwlock;
+                pthread_rwlock_rdlock(&rwlock);
                 if (curNode->key == key) {
-                        node_mutex = curNode->mutex;
-                        pthread_mutex_lock(&node_mutex);
+                        /* Question
+                        1. Can wrlock overwrite(?) upon read lock?
+                                -> If possible, there is no need to unlock here
+                        2. Is **_unlock function sending signal to others?
+                        */
+                        pthread_rwlock_unlock(&rwlock);
+                        pthread_rwlock_wrlock(&rwlock);
                         break;
                 } else if (curNode->key > key) {
                         parNode = curNode;
@@ -370,6 +379,7 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
                         parNode = curNode;
                         curNode = curNode->right;
                 }
+                pthread_rwlock_unlock(&rwlock);
         }
 
         /* If there is no key return -1 */
@@ -379,7 +389,10 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
 #endif
                 return -1;
         }
-
+#ifdef fg_remove
+        printf("Thread id : %ld del key : %d\n", pthread_self(), key);
+        // printf("\n");
+#endif
         /* remove root node*/
         if (!parNode) {
                 /* Since root nodes has no parent node, use global mutex lock*/
@@ -420,7 +433,7 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
                                 lab2_node_delete(leastFromRight);
                         }
                 }
-                pthread_mutex_unlock(&node_mutex);
+                pthread_rwlock_unlock(&rwlock);
                 return 0;
         }
 
@@ -478,7 +491,7 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
                         lab2_node_delete(leastFromRight);
                 }
         }
-        pthread_mutex_unlock(&node_mutex);
+        pthread_rwlock_unlock(&rwlock);
         return 0;
 }
 

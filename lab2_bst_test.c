@@ -150,7 +150,6 @@ void bst_test(int num_threads, int node_count) {
                      LAB2_OPTYPE_INSERT, exe_time);
         lab2_tree_delete(tree);
 
-#ifndef DEBUG
         /*
          * multi therad insert test coarse-grained
          */
@@ -208,7 +207,7 @@ void bst_test(int num_threads, int node_count) {
 
         printf("\n");
         lab2_tree_delete(tree);
-#endif
+
         /*
          * single thread delete test
          */
@@ -288,7 +287,9 @@ void bst_test(int num_threads, int node_count) {
                 else if (is_sync == LAB2_TYPE_COARSEGRAINED)
                         lab2_node_insert_cg(tree, node);
         }
-
+#ifdef DEBUG
+        printf("Start delete fg\n");
+#endif
         gettimeofday(&tv_delete_start, NULL);
         for (i = 0; i < num_threads; i++) {
                 thread_arg *th_arg = &threads[i];
@@ -304,7 +305,9 @@ void bst_test(int num_threads, int node_count) {
 
         for (i = 0; i < num_threads; i++)
                 pthread_join(threads[i].thread, NULL);
-
+#ifdef DEBUG
+        printf("End delete fg\n");
+#endif
         gettimeofday(&tv_delete_end, NULL);
         exe_time = get_timeval(&tv_delete_start, &tv_delete_end);
 
