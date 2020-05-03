@@ -356,11 +356,14 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
         lab2_node *curNode = tree->root;
         lab2_node *parNode = NULL;
 
+        pthread_mutex_t node_mutex;
         /* Find the Node which contains given key*/
         while (curNode) {
-                if (curNode->key == key)
+                if (curNode->key == key) {
+                        node_mutex = curNode->mutex;
+                        pthread_mutex_lock(&node_mutex);
                         break;
-                else if (curNode->key > key) {
+                } else if (curNode->key > key) {
                         parNode = curNode;
                         curNode = curNode->left;
                 } else {
@@ -380,7 +383,6 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
         /* remove root node*/
         if (!parNode) {
                 /* Since root nodes has no parent node, use global mutex lock*/
-                pthread_mutex_lock(&mutex);
                 if (!curNode->left && !curNode->right) {
                         tree->root = NULL;
                 }
@@ -418,12 +420,10 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
                                 lab2_node_delete(leastFromRight);
                         }
                 }
-                pthread_mutex_unlock(&mutex);
+                pthread_mutex_unlock(&node_mutex);
                 return 0;
         }
 
-        pthread_mutex_t node_mutex = parNode->mutex;
-        pthread_mutex_lock(&node_mutex);
         /* CASE 1 */
         if (!curNode->left && !curNode->right) {
                 if (parNode->right)
