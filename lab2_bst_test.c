@@ -28,7 +28,8 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
-#define DEBUG
+// #define DEBUG
+#define thread_check
 
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);
@@ -70,12 +71,18 @@ void *thread_job_delete(void *arg) {
         int *data_set = th_arg->data_set;
         int start = th_arg->start, end = th_arg->end;
         int i;
+#ifdef thread_check
+        printf("\t thread : %ld start\n", pthread_self());
+#endif
         for (i = start; i < end; i++) {
                 if (is_sync == LAB2_TYPE_FINEGRAINED)
                         lab2_node_remove_fg(tree, data_set[i]);
                 else if (is_sync == LAB2_TYPE_COARSEGRAINED)
                         lab2_node_remove_cg(tree, data_set[i]);
         }
+#ifdef thread_check
+        printf("\t thread : %ld end\n", pthread_self());
+#endif
 }
 
 void *thread_job_insert(void *arg) {
@@ -282,6 +289,7 @@ void bst_test(int num_threads, int node_count) {
         tree = lab2_tree_create();
         for (i = 0; i < node_count; i++) {
                 node = lab2_node_create(data[i]);
+                // lab2_node_insert_fg(tree, node);
                 if (is_sync == LAB2_TYPE_FINEGRAINED)
                         lab2_node_insert_fg(tree, node);
                 else if (is_sync == LAB2_TYPE_COARSEGRAINED)
