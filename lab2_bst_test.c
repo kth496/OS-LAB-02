@@ -29,7 +29,7 @@
 #define LAB2_OPTYPE_DELETE 1
 
 // #define DEBUG
-#define thread_check
+// #define thread_check
 
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);

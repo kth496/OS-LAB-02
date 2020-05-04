@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/lab2_bst.exe",
-      "args": ["-t", "2", "-c", "100"],
+      "args": ["-t", "2", "-c", "1000000"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
