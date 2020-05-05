@@ -143,7 +143,7 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
         curNode = tree->root;
         pthread_mutex_unlock(&mutex);
 
-        while (true) {
+        while (1) {
                 if (new_node->key == curNode->key) {
                         pthread_mutex_unlock(&curNode->mutex);
                         return 1;
@@ -165,7 +165,6 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
                         }
                 }
 
-                pthread_mutex_lock(&parNode->mutex);
                 pthread_mutex_unlock(&curNode->mutex);
                 curNode = nextNode;
         }
