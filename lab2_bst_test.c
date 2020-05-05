@@ -28,9 +28,6 @@
 #define LAB2_OPTYPE_INSERT 0
 #define LAB2_OPTYPE_DELETE 1
 
-// #define DEBUG
-// #define thread_check
-
 void lab2_sync_usage(char *cmd) {
         printf("\n Usage for %s : \n", cmd);
         printf("    -t: num thread, must be bigger than 0 ( e.g. 4 )\n");
@@ -58,9 +55,9 @@ static void print_result(lab2_tree *tree, int num_threads, int node_count,
         printf("    test threads        : %d \n", num_threads);
         printf("    execution time      : %lf seconds \n\n", time);
 
-        // printf("\n BST inorder iteration result : \n");
-        // result_count = lab2_node_print_inorder(tree->root);
-        // printf("\n total node count    : %d \n\n", node_count);
+        printf("\n BST inorder iteration result : \n");
+        result_count = lab2_node_print_inorder(tree->root);
+        printf("\n total node count    : %d \n\n", node_count);
 }
 
 void *thread_job_delete(void *arg) {
@@ -71,18 +68,13 @@ void *thread_job_delete(void *arg) {
         int *data_set = th_arg->data_set;
         int start = th_arg->start, end = th_arg->end;
         int i;
-#ifdef thread_check
-        printf("\t thread : %ld start\n", pthread_self());
-#endif
+
         for (i = start; i < end; i++) {
                 if (is_sync == LAB2_TYPE_FINEGRAINED)
                         lab2_node_remove_fg(tree, data_set[i]);
                 else if (is_sync == LAB2_TYPE_COARSEGRAINED)
                         lab2_node_remove_cg(tree, data_set[i]);
         }
-#ifdef thread_check
-        printf("\t thread : %ld end\n", pthread_self());
-#endif
 }
 
 void *thread_job_insert(void *arg) {
@@ -116,25 +108,10 @@ void bst_test(int num_threads, int node_count) {
         thread_arg *threads;
         int *data = (int *)malloc(sizeof(int) * node_count);
 
-#ifndef DEBUG
         srand(time(NULL));
         for (i = 0; i < node_count; i++) {
                 data[i] = rand();
         }
-#endif
-
-#ifdef DEBUG
-        srand(1);
-        for (i = 0; i < node_count; i++) {
-                data[i] = rand() % 100;
-                printf("%d ", data[i]);
-        }
-        // int testCase2[20] = {83, 86, 77, 15, 93, 35, 86, 92, 49, 21};
-        // for (i = 0; i < node_count; i++) {
-        //         data[i] = testCase2[i];
-        // }
-        // printf("\n");
-#endif
 
         if (!(threads = (thread_arg *)malloc(sizeof(thread_arg) * num_threads)))
                 abort();
@@ -224,22 +201,11 @@ void bst_test(int num_threads, int node_count) {
                 lab2_node_insert(tree, node);
         }
 
-#ifdef DEBUG
-        lab2_node_print_inorder(tree->root);
-        printf("\n-------------\n");
-#endif
         gettimeofday(&tv_start, NULL);
         for (i = 0; i < node_count; i++) {
                 lab2_node_remove(tree, data[i]);
-#ifdef DEBUG
-                printf("remove %d -> ", data[i]);
-                lab2_node_print_inorder(tree->root);
-                printf("\n");
-#endif
         }
-#ifdef DEBUG
-        printf("is tree empty? %d\n", isTreeEmpty(tree));
-#endif
+
         gettimeofday(&tv_end, NULL);
         exe_time = get_timeval(&tv_start, &tv_end);
         print_result(tree, num_threads, node_count, LAB2_TYPE_SINGLE,
@@ -295,9 +261,7 @@ void bst_test(int num_threads, int node_count) {
                 else if (is_sync == LAB2_TYPE_COARSEGRAINED)
                         lab2_node_insert_cg(tree, node);
         }
-#ifdef DEBUG
-        printf("Start delete fg\n");
-#endif
+
         gettimeofday(&tv_delete_start, NULL);
         for (i = 0; i < num_threads; i++) {
                 thread_arg *th_arg = &threads[i];
@@ -313,9 +277,7 @@ void bst_test(int num_threads, int node_count) {
 
         for (i = 0; i < num_threads; i++)
                 pthread_join(threads[i].thread, NULL);
-#ifdef DEBUG
-        printf("End delete fg\n");
-#endif
+
         gettimeofday(&tv_delete_end, NULL);
         exe_time = get_timeval(&tv_delete_start, &tv_delete_end);
 

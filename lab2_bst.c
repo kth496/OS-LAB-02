@@ -1,8 +1,8 @@
 /*
  *	Operating System Lab
  *	    Lab2 (Synchronization)
- *	    Student id :
- *	    Student name :
+ *	    Student id : 32131417, 32173656
+ *	    Student name : 김태홍, 이환주
  *
  *   lab2_bst.c :
  *       - thread-safe bst code.
@@ -20,9 +20,6 @@
 
 #include "include/lab2_sync_types.h"
 
-// #define DEBUG
-// #define fg_remove
-
 /* This is Global mutex variable*/
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -34,10 +31,8 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
  *  @return                 : status (success or fail)
  */
 int lab2_node_print_inorder(lab2_node *node) {
-        if (!node) {
-                printf("Tree is empty!\n");
+        if (!node)
                 return -1;
-        }
 
         if (node->left)
                 lab2_node_print_inorder(node->left);
@@ -75,7 +70,6 @@ lab2_node *lab2_node_create(int key) {
         // You need to implement lab2_node_create function.
         lab2_node *node = (lab2_node *)malloc(sizeof(lab2_node));
 
-        // pthread_mutex_init(&node->mutex, NULL);
         node->key = key;
         node->left = node->right = NULL;
         pthread_mutex_init(&(node->mutex), NULL);
@@ -130,17 +124,12 @@ int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
 int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
         // You need to implement lab2_node_insert_fg function.
 
-        // pthread_mutex_lock(&mutex);
         lab2_node *curNode = tree->root;
         lab2_node *parNode = NULL;
-
-        // printf("thread id : %ld , node key : %d\n", pthread_self(),
-        //        new_node->key);
 
         while (curNode) {
                 parNode = curNode;
                 if (new_node->key == curNode->key) {
-                        // pthread_mutex_unlock(&mutex);
                         return 1;
                 }
 
@@ -164,7 +153,6 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
         else
                 parNode->right = new_node;
 
-        // pthread_mutex_unlock(&mutex);
         pthread_mutex_unlock(&node_mutex);
         return 0;
 }
@@ -185,9 +173,6 @@ int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
 
         lab2_node *curNode = tree->root;
         lab2_node *parNode = NULL;
-
-        // printf("thread id : %ld , node key : %d\n", pthread_self(),
-        //        new_node->key);
 
         while (curNode) {
                 parNode = curNode;
@@ -239,12 +224,8 @@ int lab2_node_remove(lab2_tree *tree, int key) {
         }
 
         /* If there is no key return -1 */
-        if (!curNode) {
-#ifdef DEBUG
-                printf("There is no such key : %d\n", key);
-#endif
+        if (!curNode)
                 return -1;
-        }
 
         /* remove root node*/
         if (!parNode) {
@@ -385,16 +366,9 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
         }
 
         /* If there is no key return -1 */
-        if (!curNode) {
-#ifdef DEBUG
-                printf("There is no such key : %d\n", key);
-#endif
+        if (!curNode)
                 return -1;
-        }
-#ifdef fg_remove
-        printf("Thread id : %ld del key : %d\n", pthread_self(), key);
-        // printf("\n");
-#endif
+
         /* remove root node*/
         if (!parNode) {
                 /* Since root nodes has no parent node, use global mutex lock*/
@@ -527,9 +501,6 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
 
         /* If there is no key return -1 */
         if (!curNode) {
-#ifdef DEBUG
-                printf("There is no such key : %d\n", key);
-#endif
                 pthread_mutex_unlock(&mutex);
                 return -1;
         }
